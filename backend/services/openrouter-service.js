@@ -32,7 +32,7 @@ class OpenRouterService {
                 messages: [
                     {
                         role: 'system',
-                        content: 'אתה מומחה ברישוי עסקים בישראל. תפקידך להפוך מידע טכני מורכב על דרישות רישוי לדוח ברור ומובן עבור בעלי עסקים. הדוח צריך להיות בעברית, מקצועי אך נגיש.'
+                        content: 'אתה מומחה מנוסה ברישוי עסקים בישראל עם יכולות עיבוד נתונים מתקדמות. אתה מתמחה בעיבוד חכם של דרישות רישוי גולמיות, התאמה אישית מדויקת לכל עסק, ותרגום שפה משפטית מורכבת לשפה עסקית ברורה ומעשית. הדוחות שלך מסודרים בקפדנות לפי עדיפויות עם המלצות פעולה קונקרטיות.'
                     },
                     {
                         role: 'user', 
@@ -46,7 +46,7 @@ class OpenRouterService {
                 headers: {
                     'Authorization': `Bearer ${this.apiKey}`,
                     'Content-Type': 'application/json',
-                    'HTTP-Referer': 'https://localhost:3001',
+                    'HTTP-Referer': 'http://localhost:3001',
                     'X-Title': 'Business Licensing Report Generator'
                 }
             });
@@ -57,6 +57,10 @@ class OpenRouterService {
             
         } catch (error) {
             console.error('Error generating report with OpenRouter:', error.message);
+            if (error.response) {
+                console.error('Response status:', error.response.status);
+                console.error('Response data:', error.response.data);
+            }
             
             // Fallback to basic report if AI fails
             return this.generateFallbackReport(requirementsData, businessProfile);
@@ -71,9 +75,16 @@ class OpenRouterService {
      */
     buildReportPrompt(requirementsData, businessProfile) {
         return `
-צור דוח מקיף ונגיש על דרישות הרישוי עבור העסק הבא:
+אתה מומחה מנוסה ברישוי עסקים בישראל. תפקידך לנתח דרישות רישוי גולמיות ולהפוך אותן לדוח מקיף, מותאם אישית וברור עבור בעל העסק.
 
-**פרטי העסק:**
+**עיבוד חכם של הדרישות:**
+קיבלת נתונים גולמיים של דרישות רישוי. תפקידך:
+- לנתח ולעבד את הנתונים הגולמיים לתמצית ברורה ומובנת
+- לסנן את הדרישות הרלוונטיות ספציפית לעסק הזה
+- לזהות קשרים וחפיפות בין דרישות שונות
+- להדגיש את הדרישות הקריטיות והדחופות ביותר
+
+**פרטי העסק לעיבוד מותאם אישית:**
 - סוג העסק: ${businessProfile.businessType}
 - קיבולת ישיבה: ${businessProfile.seatingCapacity} מקומות
 - שטח העסק: ${businessProfile.floorArea} מ"ר
@@ -82,42 +93,70 @@ class OpenRouterService {
 - מוכן מזון מראש: ${businessProfile.preparesFood ? 'כן' : 'לא'}
 - פתוח עד מאוחר: ${businessProfile.lateHours ? 'כן' : 'לא'}
 
-**דרישות הרישוי שנמצאו:**
+**נתונים גולמיים לעיבוד:**
 ${JSON.stringify(requirementsData, null, 2)}
 
-אנא צור דוח מובנה הכולל:
+**הוראות יצירת הדוח:**
 
-1. **סיכום ביצוע** - הסבר קצר על המשמעות של הדרישות עבור העסק הזה
-2. **דרישות חובה** - רשימה מסודרת של כל הדרישות החובה, מחולקת לפי רשות:
-   - עירייה (רישיון עסק, ביטוח וכו')
-   - משטרה (רישיון אלכוהול, אירועים)  
-   - משרד הבריאות (רישיון מזון, הכשרות)
-   - מכבי האש (בטיחות אש)
-3. **עלויות צפויות** - הערכת עלויות לכל דרישה (אם ידוע)
-4. **לוחות זמנים** - כמה זמן לוקח כל תהליך
-5. **שלבים מומלצים** - סדר מומלץ לביצוע הדרישות
-6. **טיפים וערות** - מידע חשוב נוסף והמלצות
+**התאמה אישית מלאה:**
+- נתח את מאפייני העסק הספציפיים (גודל, תפוסה, פעילות)
+- התאם את הדרישות בדיוק למה שרלוונטי לעסק הזה
+- הסבר איך כל מאפיין משפיע על הדרישות (למשל: "בשל קיבולת של ${businessProfile.seatingCapacity} מקומות...")
+- זהה דרישות שעלולות להשתנות בהתבסס על המאפיינים הספציפיים
 
-הדוח צריך להיות:
-- בעברית ברורה ופשוטה
-- מעשי ופרקטי לבעל העסק
-- מסודר בפורמט Markdown
-- כולל כל המידע הרלוונטי מבלי להתעלם מפרטים חשובים
+**תרגום שפת חוק לשפה עסקית:**
+- תרגם מונחים משפטיים וטכניים לשפה פשוטה ויומיומית
+- הסבר את המשמעות המעשית של כל דרישה
+- המר הליכים רשמיים לפעולות קונקרטיות שבעל העסק צריך לעשות
+- הוסף דוגמאות מעשיות כשאפשר
 
-תשובה צריכה להיות בפורמט JSON עם המבנה הבא:
+**ארגון תוכן מובנה עם עדיפויות:**
+1. **סיכום ביצועי מותאם** - המשמעות הכוללת לעסק הספציפי הזה
+2. **מפת דרכים לפעולה** - סדר ביצוע מומלץ עם עדיפויות ברורות:
+   - 🔴 **דחוף וקריטי** (חייב להתחיל מיד)
+   - 🟡 **חשוב** (להתחיל בחודש הקרוב)  
+   - 🟢 **לא דחוף** (ניתן לדחות)
+3. **דרישות לפי רשות עם עלויות וזמנים:**
+   - עירייה: פירוט ממוקד למה שרלוונטי לגודל/סוג העסק
+   - משטרה: רק אם רלוונטי (אלכוהול/אירועים)
+   - משרד הבריאות: מותאם לסוג המזון/הכנה
+   - מכבי האש: מותאם לגודל ופעילות העסק
+4. **תכנון כספי מותאם** - עלויות ספציפיות לעסק הזה
+5. **לוח זמנים אישי** - התבסס על המאפיינים לתכנון ריאלי
+
+**המלצות פעולה מותאמות:**
+- המלצות ספציפיות בהתבסס על סוג ומאפייני העסק
+- זהה חוסכי זמן וכסף עבור העסק הזה
+- הצע אסטרטגיות להתמודד עם אתגרים צפויים
+- ציין על שיתופי פעולה אפשריים עם גורמים מקצועיים
+
+הדוח חייב להיות:
+- **מותאם אישית 100%** למאפייני העסק הספציפיים
+- **בשפה עסקית ברורה** ללא ז'רגון משפטי
+- **מעשי ויישומי** עם פעולות קונקרטיות
+- **מסודר לפי עדיפויות** עם חלוקה ברורה לדחוף/חשוב/לא דחוף
+
+תשובה בפורמט JSON עם המבנה הבא:
 {
-  "title": "כותרת הדוח",
-  "summary": "סיכום קצר",
+  "title": "דוח רישוי מותאם אישית - [סוג העסק]",
+  "summary": "סיכום מותאם אישית המתמקד במאפייני העסק הספציפיים",
   "sections": [
     {
-      "title": "כותרת הסעיף",
-      "content": "תוכן הסעיף בmarkdown",
+      "title": "מפת דרכים לפעולה",
+      "content": "תוכן markdown עם עדיפויות צבעוניות",
+      "priority": "high"
+    },
+    {
+      "title": "דרישות רשות [שם] - מותאם לעסק שלך",
+      "content": "תוכן ספציפי לעסק בmarkdown",
       "priority": "high|medium|low"
     }
   ],
-  "recommendations": ["המלצה 1", "המלצה 2"],
-  "totalEstimatedCost": "הערכת עלות כוללת",
-  "estimatedTimeframe": "זמן הערכה כולל"
+  "recommendations": ["המלצות מותאמות אישית לעסק הזה"],
+  "personalizedInsights": ["תובנות ייחודיות לסוג ומאפייני העסק"],
+  "totalEstimatedCost": "הערכת עלות מותאמת לעסק הספציפי",
+  "estimatedTimeframe": "לוח זמנים מותאם למורכבות העסק הספציפי",
+  "criticalDeadlines": ["מועדים קריטיים ודחופים עבור העסק הזה"]
 }
 `;
     }
@@ -136,13 +175,21 @@ ${JSON.stringify(requirementsData, null, 2)}
             if (jsonMatch) {
                 const parsedReport = JSON.parse(jsonMatch[0]);
                 
-                // Add metadata
+                // Add metadata and ensure new fields exist
                 parsedReport.metadata = {
                     generatedAt: new Date().toISOString(),
                     businessProfile: businessProfile,
                     requirementsSummary: requirementsData.summary,
                     generatedBy: 'OpenRouter AI'
                 };
+                
+                // Ensure new fields exist with fallbacks
+                if (!parsedReport.personalizedInsights) {
+                    parsedReport.personalizedInsights = [];
+                }
+                if (!parsedReport.criticalDeadlines) {
+                    parsedReport.criticalDeadlines = [];
+                }
                 
                 return parsedReport;
             }
@@ -162,8 +209,10 @@ ${JSON.stringify(requirementsData, null, 2)}
                 }
             ],
             recommendations: this.extractRecommendations(requirementsData),
+            personalizedInsights: this.extractPersonalizedInsights(businessProfile, requirementsData),
             totalEstimatedCost: 'לא זמין',
             estimatedTimeframe: 'לא זמין',
+            criticalDeadlines: this.extractCriticalDeadlines(requirementsData),
             metadata: {
                 generatedAt: new Date().toISOString(),
                 businessProfile: businessProfile,
@@ -184,7 +233,7 @@ ${JSON.stringify(requirementsData, null, 2)}
         
         return {
             title: `דוח דרישות רישוי עבור ${businessTypeHebrew}`,
-            summary: `נמצאו ${requirementsData.summary.totalRequirements} דרישות רישוי עבור העסק שלך. הדוח כולל דרישות מ-${requirementsData.summary.authoritiesCovered.length} רשויות שונות.`,
+            summary: `נמצאו ${requirementsData.summary.totalRequirements} דרישות רישוי עבור העסק שלך. הדוח כולל דרישות מ-${Object.keys(requirementsData.summary.authorityCounts).length} רשויות שונות.`,
             sections: [
                 {
                     title: 'סיכום הדרישות',
@@ -203,8 +252,10 @@ ${JSON.stringify(requirementsData, null, 2)}
                 }
             ],
             recommendations: this.extractRecommendations(requirementsData),
+            personalizedInsights: this.extractPersonalizedInsights(businessProfile, requirementsData),
             totalEstimatedCost: 'דרוש חישוב מפורט',
             estimatedTimeframe: '2-6 חודשים (תלוי במורכבות)',
+            criticalDeadlines: this.extractCriticalDeadlines(requirementsData),
             metadata: {
                 generatedAt: new Date().toISOString(),
                 businessProfile: businessProfile,
@@ -242,8 +293,8 @@ ${JSON.stringify(requirementsData, null, 2)}
 
 - **סה"כ דרישות**: ${requirementsData.summary.totalRequirements}
 - **דרישות חובה**: ${requirementsData.summary.mandatoryRequirements}
-- **דרישות מותנות**: ${requirementsData.summary.conditionalRequirements}
-- **רשויות מעורבות**: ${requirementsData.summary.authoritiesCovered.join(', ')}
+- **דרישות אופציונליות**: ${requirementsData.summary.optionalRequirements}
+- **רשויות מעורבות**: ${Object.keys(requirementsData.summary.authorityCounts).join(', ')}
 
 ${requirementsData.businessMatch ? '✅ העסק שלך מתאים לקטגוריה שנבחרה' : '⚠️ ייתכן שיש צורך בהתאמות נוספות'}
 `;
@@ -258,7 +309,16 @@ ${requirementsData.businessMatch ? '✅ העסק שלך מתאים לקטגור�
         let content = '';
         
         const byAuthority = {};
-        requirementsData.applicableRequirements.forEach(req => {
+        
+        // Flatten requirements from grouped structure
+        const allRequirements = [];
+        Object.keys(requirementsData.requirements).forEach(authority => {
+            requirementsData.requirements[authority].forEach(req => {
+                allRequirements.push({ ...req, authority });
+            });
+        });
+        
+        allRequirements.forEach(req => {
             if (!byAuthority[req.authority]) {
                 byAuthority[req.authority] = [];
             }
@@ -289,7 +349,15 @@ ${requirementsData.businessMatch ? '✅ העסק שלך מתאים לקטגור�
      * @returns {string} Markdown content
      */
     buildMandatoryRequirementsMarkdown(requirementsData) {
-        const mandatory = requirementsData.applicableRequirements.filter(req => req.mandatory);
+        // Flatten requirements from grouped structure
+        const allRequirements = [];
+        Object.keys(requirementsData.requirements).forEach(authority => {
+            requirementsData.requirements[authority].forEach(req => {
+                allRequirements.push({ ...req, authority });
+            });
+        });
+        
+        const mandatory = allRequirements.filter(req => req.mandatory);
         
         let content = '## דרישות חובה - פעולות שחייבות לבצע\n\n';
         
@@ -324,12 +392,94 @@ ${requirementsData.businessMatch ? '✅ העסק שלך מתאים לקטגור�
         recommendations.push('שמור על קשר קבוע עם כל הרשויות הרלוונטיות לקבלת עדכונים');
         recommendations.push('הכן את כל המסמכים הנדרשים מראש כדי למהר את התהליך');
         
-        const mandatoryCount = requirementsData.applicableRequirements.filter(req => req.mandatory).length;
+        // Flatten requirements from grouped structure to count mandatory requirements
+        const allRequirements = [];
+        Object.keys(requirementsData.requirements).forEach(authority => {
+            requirementsData.requirements[authority].forEach(req => {
+                allRequirements.push({ ...req, authority });
+            });
+        });
+        
+        const mandatoryCount = allRequirements.filter(req => req.mandatory).length;
         if (mandatoryCount > 5) {
             recommendations.push('בשל מספר הדרישות הגבוה, מומלץ לשקול העסקת יועץ רישוי');
         }
 
         return recommendations;
+    }
+
+    /**
+     * Extract personalized insights based on business profile and requirements
+     * @param {Object} businessProfile - Business profile
+     * @param {Object} requirementsData - Requirements data
+     * @returns {Array<string>} Array of personalized insights
+     */
+    extractPersonalizedInsights(businessProfile, requirementsData) {
+        const insights = [];
+        
+        // Size-based insights
+        if (businessProfile.floorArea > 100) {
+            insights.push(`בשל שטח העסק הגדול (${businessProfile.floorArea} מ"ר), נדרש תשומת לב מיוחדת לבטיחות אש ונגישות`);
+        }
+        
+        // Capacity-based insights  
+        if (businessProfile.seatingCapacity > 50) {
+            insights.push(`קיבולת גבוהה של ${businessProfile.seatingCapacity} מקומות מחייבת רישוי מורכב יותר ובקרות נוספות`);
+        }
+        
+        // Activity-specific insights
+        if (businessProfile.servesAlcohol) {
+            insights.push('מכירת אלכוהול מוסיפה שכבת רישוי נוספת עם המשטרה - יכול לקחת עד 3 חודשים');
+        }
+        
+        if (businessProfile.servesMeat) {
+            insights.push('הגשת בשר מחייבת הכשרות מיוחדות ובקרה קפדנית של משרד הבריאות');
+        }
+        
+        if (businessProfile.lateHours) {
+            insights.push('פעילות במשמרת לילה דורשת אישורים נוספים מהעירייה ועלולה להיות מוגבלת באזורים מסוימים');
+        }
+
+        return insights;
+    }
+
+    /**
+     * Extract critical deadlines from requirements data
+     * @param {Object} requirementsData - Requirements data
+     * @returns {Array<string>} Array of critical deadlines
+     */
+    extractCriticalDeadlines(requirementsData) {
+        const deadlines = [];
+        
+        // General business operation deadlines
+        deadlines.push('רישיון עסק מהעירייה - חובה לפני פתיחה (2-4 שבועות)');
+        deadlines.push('ביטוח חובה - חובה לפני פתיחה (מיידי)');
+        
+        // Flatten requirements to check for specific deadlines
+        const allRequirements = [];
+        Object.keys(requirementsData.requirements).forEach(authority => {
+            requirementsData.requirements[authority].forEach(req => {
+                allRequirements.push({ ...req, authority });
+            });
+        });
+        
+        // Check for alcohol-related deadlines
+        const hasAlcoholRequirements = allRequirements.some(req => 
+            req.title && req.title.includes('אלכוהול')
+        );
+        if (hasAlcoholRequirements) {
+            deadlines.push('רישיון משקאות חריפים - להגיש 3 חודשים לפני פתיחה');
+        }
+        
+        // Check for food-related deadlines
+        const hasFoodRequirements = allRequirements.some(req => 
+            req.title && (req.title.includes('מזון') || req.title.includes('מסעדה'))
+        );
+        if (hasFoodRequirements) {
+            deadlines.push('רישיון עסק מזון מהמשרד לבריאות - 4-6 שבועות לפני פתיחה');
+        }
+
+        return deadlines;
     }
 }
 
