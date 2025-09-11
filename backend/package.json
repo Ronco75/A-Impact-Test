@@ -1,0 +1,44 @@
+{
+  "name": "business-licensing-api",
+  "version": "1.0.0",
+  "description": "API server for Israeli business licensing requirements matching system",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "build": "tsc",
+    "start": "node server.js",
+    "test": "node scripts/test-requirements-matching.js",
+    "test-api": "node scripts/test-api-endpoints.js",
+    "examples": "node examples/api-usage-examples.js",
+    "process-document": "node scripts/process-licensing-document.js"
+  },
+  "keywords": [
+    "business-licensing",
+    "regulatory-compliance",
+    "api",
+    "nodejs",
+    "israel"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "morgan": "^1.10.0",
+    "joi": "^17.9.2",
+    "compression": "^1.7.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.1",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

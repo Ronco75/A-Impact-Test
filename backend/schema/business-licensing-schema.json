@@ -1,0 +1,205 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Business Licensing Requirements Schema",
+  "description": "Schema for mapping business features to regulatory requirements for Israeli food service establishments",
+  "type": "object",
+  "properties": {
+    "businessFeatures": {
+      "type": "object",
+      "description": "Business characteristics that determine licensing requirements",
+      "properties": {
+        "businessType": {
+          "type": "string",
+          "enum": [
+            "restaurant",
+            "cafe", 
+            "fast_food",
+            "delivery_only",
+            "catering",
+            "food_truck",
+            "bar_pub",
+            "hotel_restaurant"
+          ],
+          "description": "Primary business type"
+        },
+        "seatingCapacity": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of seats available for customers"
+        },
+        "floorArea": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total floor area in square meters"
+        },
+        "services": {
+          "type": "object",
+          "properties": {
+            "alcoholService": {
+              "type": "boolean",
+              "description": "Serves alcoholic beverages"
+            },
+            "deliveryService": {
+              "type": "boolean", 
+              "description": "Provides food delivery"
+            },
+            "takeaway": {
+              "type": "boolean",
+              "description": "Offers takeaway service"
+            },
+            "liveMusic": {
+              "type": "boolean",
+              "description": "Has live music or entertainment"
+            },
+            "outdoorSeating": {
+              "type": "boolean",
+              "description": "Has outdoor seating area"
+            }
+          }
+        },
+        "kitchenFeatures": {
+          "type": "object",
+          "properties": {
+            "gasUsage": {
+              "type": "boolean",
+              "description": "Uses gas for cooking"
+            },
+            "smokingArea": {
+              "type": "boolean", 
+              "description": "Has designated smoking area"
+            },
+            "meatHandling": {
+              "type": "boolean",
+              "description": "Handles and serves meat products"
+            },
+            "dairyProducts": {
+              "type": "boolean",
+              "description": "Serves dairy products"
+            }
+          }
+        },
+        "operationalHours": {
+          "type": "object",
+          "properties": {
+            "lateNightOperation": {
+              "type": "boolean",
+              "description": "Operates after 23:00"
+            },
+            "twentyFourSeven": {
+              "type": "boolean",
+              "description": "Operates 24/7"
+            }
+          }
+        }
+      },
+      "required": ["businessType", "seatingCapacity", "floorArea"]
+    },
+    "regulatoryRequirements": {
+      "type": "object",
+      "description": "All regulatory requirements organized by authority",
+      "properties": {
+        "generalRequirements": {
+          "type": "array",
+          "description": "Cross-cutting requirements applicable to all businesses",
+          "items": {
+            "type": "object",
+            "properties": {
+              "requirementId": {"type": "string"},
+              "title": {"type": "string"},
+              "description": {"type": "string"},
+              "authority": {"type": "string"},
+              "mandatory": {"type": "boolean"},
+              "applicableBusinessTypes": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "conditions": {
+                "type": "object",
+                "description": "Conditions under which this requirement applies",
+                "properties": {
+                  "minSeatingCapacity": {"type": "integer"},
+                  "maxSeatingCapacity": {"type": "integer"},
+                  "minFloorArea": {"type": "number"},
+                  "maxFloorArea": {"type": "number"},
+                  "requiredServices": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  }
+                }
+              }
+            },
+            "required": ["requirementId", "title", "authority", "mandatory"]
+          }
+        },
+        "policeRequirements": {
+          "type": "array",
+          "description": "Israel Police licensing requirements",
+          "items": {
+            "$ref": "#/properties/regulatoryRequirements/properties/generalRequirements/items"
+          }
+        },
+        "healthMinistryRequirements": {
+          "type": "array", 
+          "description": "Ministry of Health requirements",
+          "items": {
+            "$ref": "#/properties/regulatoryRequirements/properties/generalRequirements/items"
+          }
+        },
+        "fireAuthorityRequirements": {
+          "type": "array",
+          "description": "National Fire and Rescue Authority requirements", 
+          "items": {
+            "$ref": "#/properties/regulatoryRequirements/properties/generalRequirements/items"
+          }
+        }
+      }
+    },
+    "businessLicensingMapping": {
+      "type": "object",
+      "description": "Mapping rules between business features and requirements",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ruleId": {"type": "string"},
+              "condition": {
+                "type": "object",
+                "description": "Business feature conditions",
+                "properties": {
+                  "businessType": {"type": "string"},
+                  "seatingCapacity": {
+                    "type": "object",
+                    "properties": {
+                      "min": {"type": "integer"},
+                      "max": {"type": "integer"}
+                    }
+                  },
+                  "floorArea": {
+                    "type": "object", 
+                    "properties": {
+                      "min": {"type": "number"},
+                      "max": {"type": "number"}
+                    }
+                  },
+                  "hasService": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  }
+                }
+              },
+              "applicableRequirements": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "List of requirement IDs that apply when condition is met"
+              }
+            },
+            "required": ["ruleId", "condition", "applicableRequirements"]
+          }
+        }
+      }
+    }
+  },
+  "required": ["businessFeatures", "regulatoryRequirements", "businessLicensingMapping"]
+}

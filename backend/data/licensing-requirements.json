@@ -1,0 +1,338 @@
+{
+  "metadata": {
+    "sourceDocument": "18-07-2022_4.2A.pdf",
+    "documentTitle": "מפרט אחיד לפריט 4.2 א'",
+    "processedDate": "2025-09-11T14:32:59.815Z",
+    "language": "hebrew",
+    "totalPages": 59
+  },
+  "businessFeatures": {
+    "businessType": null,
+    "seatingCapacity": null,
+    "floorArea": null,
+    "services": {
+      "alcoholService": false,
+      "deliveryService": false,
+      "takeaway": false,
+      "liveMusic": false,
+      "outdoorSeating": false
+    },
+    "kitchenFeatures": {
+      "gasUsage": false,
+      "smokingArea": false,
+      "meatHandling": false,
+      "dairyProducts": false
+    },
+    "operationalHours": {
+      "lateNightOperation": false,
+      "twentyFourSeven": false
+    }
+  },
+  "regulatoryRequirements": {
+    "generalRequirements": [
+      {
+        "requirementId": "GEN-001",
+        "title": "רישיון עסק כללי",
+        "description": "קבלת רישיון עסק מהרשות המקומית",
+        "authority": "רשות מקומית",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "cafe",
+          "fast_food",
+          "delivery_only",
+          "catering",
+          "bar_pub"
+        ],
+        "conditions": {}
+      },
+      {
+        "requirementId": "GEN-002",
+        "title": "ביטוח אחריות כלפי צד שלישי",
+        "description": "ביטוח אחריות המעסיק כלפי צד שלישי",
+        "authority": "רשות מקומית",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "cafe",
+          "fast_food",
+          "delivery_only",
+          "catering",
+          "bar_pub"
+        ],
+        "conditions": {}
+      },
+      {
+        "requirementId": "GEN-003",
+        "title": "תעודת השכלה/הכשרה מקצועית",
+        "description": "תעודת השכלה או הכשרה מקצועית רלוונטית",
+        "authority": "רשות מקומית",
+        "mandatory": false,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "cafe",
+          "catering"
+        ],
+        "conditions": {
+          "minSeatingCapacity": 20
+        }
+      }
+    ],
+    "policeRequirements": [
+      {
+        "requirementId": "POL-001",
+        "title": "אישור משטרה לפתיחת עסק",
+        "description": "אישור משטרת ישראל לפתיחת מקום עסק",
+        "authority": "משטרת ישראל",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "cafe",
+          "bar_pub"
+        ],
+        "conditions": {
+          "minSeatingCapacity": 10
+        }
+      },
+      {
+        "requirementId": "POL-002",
+        "title": "רישיון למכירת משקאות אלכוהוליים",
+        "description": "רישיון למכירת משקאות אלכוהוליים למגוון סוגים",
+        "authority": "משטרת ישראל",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "bar_pub"
+        ],
+        "conditions": {
+          "requiredServices": [
+            "alcoholService"
+          ]
+        }
+      },
+      {
+        "requirementId": "POL-003",
+        "title": "רישיון לאירועים ומוזיקה",
+        "description": "רישיון לקיום אירועים ונגינה במקום",
+        "authority": "משטרת ישראל",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "bar_pub"
+        ],
+        "conditions": {
+          "requiredServices": [
+            "liveMusic"
+          ]
+        }
+      }
+    ],
+    "healthMinistryRequirements": [
+      {
+        "requirementId": "MOH-001",
+        "title": "רישיון לעסק מזון",
+        "description": "רישיון מהמשרד לבריאות לניהול עסק מזון",
+        "authority": "משרד הבריאות",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "cafe",
+          "fast_food",
+          "delivery_only",
+          "catering"
+        ],
+        "conditions": {}
+      },
+      {
+        "requirementId": "MOH-002",
+        "title": "תעודת הכשרה בטיפול במזון",
+        "description": "תעודת השלמת קורס בטיפול במזון לבעל העסק או מנהל",
+        "authority": "משרד הבריאות",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "cafe",
+          "fast_food",
+          "delivery_only",
+          "catering"
+        ],
+        "conditions": {}
+      },
+      {
+        "requirementId": "MOH-003",
+        "title": "בדיקות מעבדה תקופתיות",
+        "description": "ביצוע בדיקות מעבדה תקופתיות למזון ולמים",
+        "authority": "משרד הבריאות",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "cafe",
+          "fast_food",
+          "catering"
+        ],
+        "conditions": {
+          "minSeatingCapacity": 15
+        }
+      },
+      {
+        "requirementId": "MOH-004",
+        "title": "רישיון למכירת בשר",
+        "description": "רישיון מיוחד למכירת בשר ומוצרי בשר",
+        "authority": "משרד הבריאות",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "fast_food",
+          "catering"
+        ],
+        "conditions": {
+          "requiredServices": [
+            "meatHandling"
+          ]
+        }
+      }
+    ],
+    "fireAuthorityRequirements": [
+      {
+        "requirementId": "FIRE-001",
+        "title": "אישור בטיחות אש",
+        "description": "אישור בטיחות אש ממכבי האש וההצלה הארצי",
+        "authority": "מכבי האש וההצלה הארצי",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "cafe",
+          "fast_food",
+          "bar_pub"
+        ],
+        "conditions": {
+          "minFloorArea": 50
+        }
+      },
+      {
+        "requirementId": "FIRE-002",
+        "title": "מערכת כיבוי אש",
+        "description": "התקנת מערכת כיבוי אש אוטומטית במטבח",
+        "authority": "מכבי האש וההצלה הארצי",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "fast_food",
+          "catering"
+        ],
+        "conditions": {
+          "requiredServices": [
+            "gasUsage"
+          ],
+          "minFloorArea": 100
+        }
+      },
+      {
+        "requirementId": "FIRE-003",
+        "title": "יציאות חירום",
+        "description": "הבטחת יציאות חירום מתאימות ונגישות",
+        "authority": "מכבי האש וההצלה הארצי",
+        "mandatory": true,
+        "applicableBusinessTypes": [
+          "restaurant",
+          "cafe",
+          "bar_pub"
+        ],
+        "conditions": {
+          "minSeatingCapacity": 30
+        }
+      }
+    ]
+  },
+  "businessLicensingMapping": {
+    "rules": [
+      {
+        "ruleId": "RULE-001",
+        "condition": {
+          "businessType": "restaurant",
+          "seatingCapacity": {
+            "min": 1
+          }
+        },
+        "applicableRequirements": [
+          "GEN-001",
+          "GEN-002",
+          "MOH-001",
+          "MOH-002",
+          "FIRE-001"
+        ]
+      },
+      {
+        "ruleId": "RULE-002",
+        "condition": {
+          "businessType": "restaurant",
+          "seatingCapacity": {
+            "min": 20
+          },
+          "hasService": [
+            "alcoholService"
+          ]
+        },
+        "applicableRequirements": [
+          "GEN-001",
+          "GEN-002",
+          "GEN-003",
+          "POL-001",
+          "POL-002",
+          "MOH-001",
+          "MOH-002",
+          "MOH-003",
+          "FIRE-001",
+          "FIRE-003"
+        ]
+      },
+      {
+        "ruleId": "RULE-003",
+        "condition": {
+          "businessType": "cafe",
+          "seatingCapacity": {
+            "min": 1,
+            "max": 15
+          }
+        },
+        "applicableRequirements": [
+          "GEN-001",
+          "GEN-002",
+          "MOH-001",
+          "MOH-002"
+        ]
+      },
+      {
+        "ruleId": "RULE-004",
+        "condition": {
+          "businessType": "fast_food",
+          "hasService": [
+            "meatHandling"
+          ]
+        },
+        "applicableRequirements": [
+          "GEN-001",
+          "GEN-002",
+          "MOH-001",
+          "MOH-002",
+          "MOH-004",
+          "FIRE-001"
+        ]
+      },
+      {
+        "ruleId": "RULE-005",
+        "condition": {
+          "floorArea": {
+            "min": 100
+          },
+          "hasService": [
+            "gasUsage"
+          ]
+        },
+        "applicableRequirements": [
+          "FIRE-002"
+        ]
+      }
+    ]
+  }
+}
