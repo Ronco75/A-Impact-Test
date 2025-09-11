@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import BusinessQuestionnaire from './components/BusinessQuestionnaire'
+import Report from './components/Report'
 import type { BusinessData } from './components/BusinessQuestionnaire'
+import type { BusinessProfile, GeneratedReport, RequirementsResponse } from './services/api'
+import apiService from './services/api'
 import './components/BusinessQuestionnaire.css'
+import './components/Report.css'
 import './App.css'
 
 const CHARACTERISTICS_HEBREW_MAP: Record<string, string> = {
@@ -18,50 +22,102 @@ const CHARACTERISTICS_HEBREW_MAP: Record<string, string> = {
 };
 
 function App() {
-  const [submittedData, setSubmittedData] = useState<BusinessData | null>(null)
+  const [generatedReport, setGeneratedReport] = useState<GeneratedReport | null>(null)
+  const [rawRequirements, setRawRequirements] = useState<RequirementsResponse['data'] | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const convertBusinessDataToProfile = (data: BusinessData): BusinessProfile => {
+    // Determine business type based on characteristics - simplified logic
+    let businessType = 'restaurant'; // default
+    
+    if (data.additionalCharacteristics.includes('delivery_service') && 
+        data.additionalCharacteristics.length === 1) {
+      businessType = 'delivery_only';
+    } else if (data.additionalCharacteristics.includes('catering')) {
+      businessType = 'catering';
+    } else if (data.additionalCharacteristics.includes('alcohol_service')) {
+      businessType = 'bar_pub';
+    } else if (data.seatingCapacity && Number(data.seatingCapacity) < 30) {
+      businessType = 'cafe';
+    }
+
+    return {
+      businessType,
+      floorArea: Number(data.businessSize),
+      seatingCapacity: Number(data.seatingCapacity),
+      servesAlcohol: data.additionalCharacteristics.includes('alcohol_service'),
+      servesMeat: data.additionalCharacteristics.includes('meat_sales'),
+      preparesFood: true, // Assume true for food businesses
+      lateHours: data.additionalCharacteristics.includes('late_hours'),
+      hasGasUsage: data.additionalCharacteristics.includes('gas_usage'),
+      hasOutdoorSeating: data.additionalCharacteristics.includes('outdoor_seating'),
+      hasLiveMusic: data.additionalCharacteristics.includes('live_music'),
+      providesDelivery: data.additionalCharacteristics.includes('delivery_service'),
+      providesCatering: data.additionalCharacteristics.includes('catering'),
+      isFoodTruck: data.additionalCharacteristics.includes('food_truck'),
+      isKosher: data.additionalCharacteristics.includes('kosher')
+    };
+  };
 
   const handleQuestionnaireSubmit = async (data: BusinessData) => {
     setIsLoading(true)
+    setError(null)
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    console.log('Business data submitted:', data)
-    setSubmittedData(data)
-    setIsLoading(false)
+    try {
+      console.log('Business data submitted:', data)
+      
+      const businessProfile = convertBusinessDataToProfile(data);
+      console.log('Converted business profile:', businessProfile);
+      
+      // Generate the report using the API
+      const reportResponse = await apiService.generateReport(businessProfile);
+      
+      console.log('Report generated successfully:', reportResponse);
+      
+      setGeneratedReport(reportResponse.data.report);
+      setRawRequirements(reportResponse.data.rawRequirements);
+      
+    } catch (err) {
+      console.error('Error generating report:', err);
+      setError(err instanceof Error ? err.message : 'שגיאה ביצירת הדוח');
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const handleStartOver = () => {
-    setSubmittedData(null)
+    setGeneratedReport(null)
+    setRawRequirements(null)
+    setError(null)
   }
 
-  if (submittedData) {
+  // Show report if generated
+  if (generatedReport) {
     return (
       <div className="app">
-        <div className="results-container">
-          <h1>שאלון הושלם</h1>
-          <p>המידע על העסק שלך נאסף בהצלחה.</p>
-          
-          <div className="submitted-data">
-            <h2>מידע שנשלח:</h2>
-            <ul>
-              <li><strong>גודל העסק:</strong> {submittedData.businessSize} מטרים רבועים</li>
-              <li><strong>תפוסה:</strong> {submittedData.seatingCapacity} מקומות</li>
-              <li><strong>מאפיינים נוספים:</strong> {
-                submittedData.additionalCharacteristics.length > 0 
-                  ? submittedData.additionalCharacteristics.map(char => CHARACTERISTICS_HEBREW_MAP[char] || char).join(', ')
-                  : 'לא נבחרו'
-              }</li>
-            </ul>
+        <Report 
+          report={generatedReport}
+          rawRequirements={rawRequirements}
+          onStartOver={handleStartOver}
+        />
+      </div>
+    )
+  }
+
+  // Show error if occurred
+  if (error) {
+    return (
+      <div className="app">
+        <div className="error-container">
+          <h1>שגיאה ביצירת הדוח</h1>
+          <p className="error-message">{error}</p>
+          <div className="error-details">
+            <p>אנא נסה שוב או פנה לתמיכה טכנית.</p>
+            <p>ודא שהשרת מופעל ומחובר לאינטרנט.</p>
           </div>
-          
-          <p className="next-steps">
-            האינטגרציה עם בינה מלאכותית ויצירת הדוח יימשלמו בשלב הבא.
-          </p>
-          
           <button onClick={handleStartOver} className="start-over-button">
-            התחל מחדש
+            נסה שוב
           </button>
         </div>
       </div>

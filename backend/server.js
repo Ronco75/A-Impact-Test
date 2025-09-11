@@ -7,6 +7,7 @@ const path = require('path');
 
 // Import services and middleware
 const MatchingEngine = require('./services/matching-engine');
+const OpenRouterService = require('./services/openrouter-service');
 const {
     validateBusinessProfile,
     validateRequirementId,
@@ -25,6 +26,7 @@ class BusinessLicensingAPI {
         this.app = express();
         this.port = process.env.PORT || 3001;
         this.matchingEngine = null;
+        this.openRouterService = null;
         
         this.setupMiddleware();
         this.setupRoutes();
@@ -53,7 +55,7 @@ class BusinessLicensingAPI {
         this.app.use(cors({
             origin: process.env.NODE_ENV === 'production' 
                 ? ['https://yourdomain.com'] 
-                : ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:5173'],
+                : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'],
             credentials: true,
             optionsSuccessStatus: 200
         }));
@@ -77,9 +79,11 @@ class BusinessLicensingAPI {
     async initializeServices() {
         try {
             this.matchingEngine = new MatchingEngine();
+            this.openRouterService = new OpenRouterService();
             console.log('Matching engine initialized successfully');
+            console.log('OpenRouter service initialized successfully');
         } catch (error) {
-            console.error('Failed to initialize matching engine:', error);
+            console.error('Failed to initialize services:', error);
             process.exit(1);
         }
     }
@@ -107,6 +111,7 @@ class BusinessLicensingAPI {
                 endpoints: {
                     'POST /api/requirements/match': 'Get applicable requirements for business profile',
                     'GET /api/requirements/:requirementId': 'Get detailed requirement information',
+                    'POST /api/generate-report': 'Generate user-friendly report from requirements',
                     'GET /api/business-types': 'Get available business types',
                     'GET /health': 'Health check'
                 },
@@ -222,6 +227,60 @@ class BusinessLicensingAPI {
             }
         });
 
+        // Generate user-friendly report from requirements
+        this.app.post('/api/generate-report', validateBusinessProfile, async (req, res) => {
+            try {
+                console.log('Processing report generation request:', {
+                    businessType: req.body.businessType,
+                    seatingCapacity: req.body.seatingCapacity,
+                    floorArea: req.body.floorArea
+                });
+
+                // First get applicable requirements using matching engine
+                const requirementsData = this.matchingEngine.findApplicableRequirements(req.body);
+                
+                // Add business recommendations
+                const recommendations = this.matchingEngine.getBusinessRecommendations(req.body);
+                requirementsData.recommendations = recommendations;
+
+                console.log(`Generating report for ${requirementsData.summary.totalRequirements} requirements`);
+
+                // Generate user-friendly report using OpenRouter
+                const report = await this.openRouterService.generateReport(requirementsData, req.body);
+
+                console.log('Report generated successfully');
+
+                res.json({
+                    success: true,
+                    data: {
+                        report: report,
+                        rawRequirements: requirementsData // Include raw data for reference
+                    },
+                    timestamp: new Date().toISOString()
+                });
+
+            } catch (error) {
+                console.error('Error generating report:', error);
+                
+                if (error.message.includes('Missing required field') || 
+                    error.message.includes('Invalid business type')) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'Invalid business profile',
+                        details: error.message,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+
+                res.status(500).json({
+                    success: false,
+                    error: 'Internal server error during report generation',
+                    details: process.env.NODE_ENV === 'development' ? error.message : 'Report generation failed',
+                    timestamp: new Date().toISOString()
+                });
+            }
+        });
+
         // Get detailed requirement information
         this.app.get('/api/requirements/:requirementId', validateRequirementId, async (req, res) => {
             try {
@@ -296,6 +355,7 @@ class BusinessLicensingAPI {
                     'GET /api/info',
                     'GET /api/business-types',
                     'POST /api/requirements/match',
+                    'POST /api/generate-report',
                     'GET /api/requirements/:requirementId',
                     'GET /api/requirements'
                 ],

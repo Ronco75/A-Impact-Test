@@ -10,7 +10,8 @@
   box-sizing: border-box;
 }
 
-.results-container {
+.results-container,
+.error-container {
   max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
@@ -91,6 +92,39 @@
 .start-over-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+/* Error Container Styles */
+.error-container h1 {
+  color: #dc3545;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  color: #721c24;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+.error-details {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+.error-details p {
+  color: #856404;
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
 }
 
 @media (max-width: 768px) {
