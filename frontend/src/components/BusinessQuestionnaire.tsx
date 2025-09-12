@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import spinnerGif from '../assets/spinner.gif';
 
 export interface BusinessData {
   businessSize: number | '';
@@ -159,7 +160,14 @@ export default function BusinessQuestionnaire({ onSubmit, isLoading = false }: B
             disabled={isLoading}
             className="submit-button"
           >
-{isLoading ? 'מייצר דוח...' : 'יצירת דוח'}
+            {isLoading ? (
+              <span className="loading-content">
+                מייצר דוח...
+                <img src={spinnerGif} alt="Loading..." className="spinner" />
+              </span>
+            ) : (
+              'יצירת דוח'
+            )}
           </button>
         </div>
       </form>

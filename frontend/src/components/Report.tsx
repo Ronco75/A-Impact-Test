@@ -1,14 +1,11 @@
-import { useState } from 'react';
-import type { GeneratedReport, RequirementsResponse } from '../services/api';
+import type { GeneratedReport } from '../services/api';
 
 interface ReportProps {
   report: GeneratedReport;
-  rawRequirements?: RequirementsResponse['data'];
   onStartOver: () => void;
 }
 
-export default function Report({ report, rawRequirements, onStartOver }: ReportProps) {
-  const [showRawData, setShowRawData] = useState(false);
+export default function Report({ report, onStartOver }: ReportProps) {
 
   const renderMarkdownContent = (content: string) => {
     // Simple markdown rendering for basic elements
@@ -86,13 +83,6 @@ export default function Report({ report, rawRequirements, onStartOver }: ReportP
         </button>
         
         <button 
-          onClick={() => setShowRawData(!showRawData)} 
-          className="toggle-raw-data-button"
-        >
-          {showRawData ? 'הסתר מידע טכני' : 'הצג מידע טכני'}
-        </button>
-        
-        <button 
           onClick={() => window.print()} 
           className="print-button"
         >
@@ -100,36 +90,6 @@ export default function Report({ report, rawRequirements, onStartOver }: ReportP
         </button>
       </div>
 
-      {showRawData && rawRequirements && (
-        <div className="raw-data-section">
-          <h2>מידע טכני מפורט</h2>
-          
-          <div className="raw-summary">
-            <h3>סיכום דרישות</h3>
-            <ul>
-              <li>סה"כ דרישות: {rawRequirements.summary.totalRequirements}</li>
-              <li>דרישות חובה: {rawRequirements.summary.mandatoryRequirements}</li>
-              <li>דרישות מותנות: {rawRequirements.summary.conditionalRequirements}</li>
-              <li>רשויות: {rawRequirements.summary.authoritiesCovered.join(', ')}</li>
-            </ul>
-          </div>
-
-          <div className="raw-requirements">
-            <h3>רשימת דרישות מלאה</h3>
-            {rawRequirements.applicableRequirements.map((req, index) => (
-              <div key={req.requirementId} className="raw-requirement">
-                <h4>{req.title} ({req.mandatory ? 'חובה' : 'מותנה'})</h4>
-                <p><strong>רשות:</strong> {req.authority}</p>
-                <p><strong>תיאור:</strong> {req.description}</p>
-                {req.conditions.length > 0 && (
-                  <p><strong>תנאים:</strong> {req.conditions.join(', ')}</p>
-                )}
-                <p><strong>סיבת החלה:</strong> {req.applicabilityReason}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
