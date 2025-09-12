@@ -5,17 +5,19 @@ export interface BusinessProfile {
   businessType: string;
   floorArea: number;
   seatingCapacity: number;
-  servesAlcohol: boolean;
-  servesMeat: boolean;
-  preparesFood: boolean;
-  lateHours: boolean;
-  hasGasUsage?: boolean;
-  hasOutdoorSeating?: boolean;
-  hasLiveMusic?: boolean;
-  providesDelivery?: boolean;
-  providesCatering?: boolean;
-  isFoodTruck?: boolean;
-  isKosher?: boolean;
+  services: {
+    alcoholService: boolean;
+    deliveryService: boolean;
+    liveMusic: boolean;
+    outdoorSeating: boolean;
+  };
+  kitchenFeatures: {
+    gasUsage: boolean;
+    meatHandling: boolean;
+  };
+  operationalHours: {
+    lateNightOperation: boolean;
+  };
 }
 
 export interface RequirementSummary {

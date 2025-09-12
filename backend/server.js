@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -230,11 +231,12 @@ class BusinessLicensingAPI {
         // Generate user-friendly report from requirements
         this.app.post('/api/generate-report', validateBusinessProfile, async (req, res) => {
             try {
-                console.log('Processing report generation request:', {
-                    businessType: req.body.businessType,
-                    seatingCapacity: req.body.seatingCapacity,
-                    floorArea: req.body.floorArea
-                });
+                console.log('Processing report generation request:', JSON.stringify(req.body, null, 2));
+                console.log('=== BUSINESS PROFILE CHECKBOX VALUES ===');
+                console.log('servesAlcohol:', req.body.servesAlcohol);
+                console.log('servesMeat:', req.body.servesMeat);
+                console.log('lateHours:', req.body.lateHours);
+                console.log('=====================================');
 
                 // First get applicable requirements using matching engine
                 const requirementsData = this.matchingEngine.findApplicableRequirements(req.body);

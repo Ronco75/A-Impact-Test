@@ -42,21 +42,17 @@ const businessProfileSchema = Joi.object({
     services: Joi.object({
         alcoholService: Joi.boolean().default(false),
         deliveryService: Joi.boolean().default(false),
-        takeaway: Joi.boolean().default(false),
         liveMusic: Joi.boolean().default(false),
         outdoorSeating: Joi.boolean().default(false)
     }).default({}),
     
     kitchenFeatures: Joi.object({
         gasUsage: Joi.boolean().default(false),
-        smokingArea: Joi.boolean().default(false),
-        meatHandling: Joi.boolean().default(false),
-        dairyProducts: Joi.boolean().default(false)
+        meatHandling: Joi.boolean().default(false)
     }).default({}),
     
     operationalHours: Joi.object({
-        lateNightOperation: Joi.boolean().default(false),
-        twentyFourSeven: Joi.boolean().default(false)
+        lateNightOperation: Joi.boolean().default(false)
     }).default({})
 });
 

@@ -42,21 +42,24 @@ function App() {
       businessType = 'cafe';
     }
 
+    // Convert to the backend's expected structure
     return {
       businessType,
       floorArea: Number(data.businessSize),
       seatingCapacity: Number(data.seatingCapacity),
-      servesAlcohol: data.additionalCharacteristics.includes('alcohol_service'),
-      servesMeat: data.additionalCharacteristics.includes('meat_sales'),
-      preparesFood: true, // Assume true for food businesses
-      lateHours: data.additionalCharacteristics.includes('late_hours'),
-      hasGasUsage: data.additionalCharacteristics.includes('gas_usage'),
-      hasOutdoorSeating: data.additionalCharacteristics.includes('outdoor_seating'),
-      hasLiveMusic: data.additionalCharacteristics.includes('live_music'),
-      providesDelivery: data.additionalCharacteristics.includes('delivery_service'),
-      providesCatering: data.additionalCharacteristics.includes('catering'),
-      isFoodTruck: data.additionalCharacteristics.includes('food_truck'),
-      isKosher: data.additionalCharacteristics.includes('kosher')
+      services: {
+        alcoholService: data.additionalCharacteristics.includes('alcohol_service'),
+        deliveryService: data.additionalCharacteristics.includes('delivery_service'),
+        liveMusic: data.additionalCharacteristics.includes('live_music'),
+        outdoorSeating: data.additionalCharacteristics.includes('outdoor_seating')
+      },
+      kitchenFeatures: {
+        gasUsage: data.additionalCharacteristics.includes('gas_usage'),
+        meatHandling: data.additionalCharacteristics.includes('meat_sales')
+      },
+      operationalHours: {
+        lateNightOperation: data.additionalCharacteristics.includes('late_hours')
+      }
     };
   };
 
@@ -113,7 +116,6 @@ function App() {
           <h1>שגיאה ביצירת הדוח</h1>
           <p className="error-message">{error}</p>
           <div className="error-details">
-            <p>אנא נסה שוב או פנה לתמיכה טכנית.</p>
             <p>ודא שהשרת מופעל ומחובר לאינטרנט.</p>
           </div>
           <button onClick={handleStartOver} className="start-over-button">

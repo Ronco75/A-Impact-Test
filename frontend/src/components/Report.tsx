@@ -43,11 +43,11 @@ export default function Report({ report, rawRequirements, onStartOver }: ReportP
             <span className="meta-value">{report.totalEstimatedCost}</span>
           </div>
           <div className="meta-item">
-            <span className="meta-label">זמן עיבוד:</span>
+            <span className="meta-label">זמן עבודה:</span>
             <span className="meta-value">{report.estimatedTimeframe}</span>
           </div>
           <div className="meta-item">
-            <span className="meta-label">יוצר:</span>
+            <span className="meta-label">דו"ח נוצר בתאריך:</span>
             <span className="meta-value">{new Date(report.metadata.generatedAt).toLocaleDateString('he-IL')}</span>
           </div>
         </div>

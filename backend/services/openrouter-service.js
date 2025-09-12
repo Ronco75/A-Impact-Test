@@ -7,8 +7,8 @@ const axios = require('axios');
 class OpenRouterService {
     constructor() {
         this.apiKey = process.env.OPENROUTER_API_KEY;
-        this.baseUrl = 'https://openrouter.ai/api/v1';
-        this.model = 'anthropic/claude-3.5-sonnet';
+        this.baseUrl = process.env.OPENROUTER_BASE_URL;
+        this.model = process.env.OPENROUTER_BASE_MODEL;
         
         if (!this.apiKey) {
             console.warn('OpenRouter API key not found in environment variables. Set OPENROUTER_API_KEY in .env file.');
@@ -25,6 +25,17 @@ class OpenRouterService {
      */
     async generateReport(requirementsData, businessProfile) {
         try {
+            console.log('=== AI REPORT GENERATION DEBUG ===');
+            console.log('Business Profile sent to AI:', JSON.stringify(businessProfile, null, 2));
+            console.log('Requirements data being processed by AI:');
+            console.log('- Total requirements found:', requirementsData.summary?.totalRequirements || 'N/A');
+            console.log('- Requirements by authority:', JSON.stringify(requirementsData.summary?.authorityCounts || {}, null, 2));
+            console.log('- Sample requirement from processed PDF data:', JSON.stringify(
+                Object.values(requirementsData.requirements || {})[0]?.[0] || 'No requirements found', 
+                null, 2
+            ));
+            console.log('=== END DEBUG INFO ===');
+            
             const prompt = this.buildReportPrompt(requirementsData, businessProfile);
             
             const response = await axios.post(`${this.baseUrl}/chat/completions`, {
@@ -88,12 +99,12 @@ class OpenRouterService {
 - סוג העסק: ${businessProfile.businessType}
 - קיבולת ישיבה: ${businessProfile.seatingCapacity} מקומות
 - שטח העסק: ${businessProfile.floorArea} מ"ר
-- מוכר אלכוהול: ${businessProfile.servesAlcohol ? 'כן' : 'לא'}
-- מוכר בשר: ${businessProfile.servesMeat ? 'כן' : 'לא'}
-- מוכן מזון מראש: ${businessProfile.preparesFood ? 'כן' : 'לא'}
-- פתוח עד מאוחר: ${businessProfile.lateHours ? 'כן' : 'לא'}
+- מוכר אלכוהול: ${businessProfile.services?.alcoholService ? 'כן' : 'לא'}
+- מוכר בשר: ${businessProfile.kitchenFeatures?.meatHandling ? 'כן' : 'לא'}
+- שימוש בגז: ${businessProfile.kitchenFeatures?.gasUsage ? 'כן' : 'לא'}
+- פתוח עד מאוחר: ${businessProfile.operationalHours?.lateNightOperation ? 'כן' : 'לא'}
 
-**נתונים גולמיים לעיבוד:**
+**נתונים גולמיים לעיבוד מקובץ ה-PDF המקורי:**
 ${JSON.stringify(requirementsData, null, 2)}
 
 **הוראות יצירת הדוח:**
@@ -428,15 +439,15 @@ ${requirementsData.businessMatch ? '✅ העסק שלך מתאים לקטגור�
         }
         
         // Activity-specific insights
-        if (businessProfile.servesAlcohol) {
+        if (businessProfile.services?.alcoholService) {
             insights.push('מכירת אלכוהול מוסיפה שכבת רישוי נוספת עם המשטרה - יכול לקחת עד 3 חודשים');
         }
         
-        if (businessProfile.servesMeat) {
+        if (businessProfile.kitchenFeatures?.meatHandling) {
             insights.push('הגשת בשר מחייבת הכשרות מיוחדות ובקרה קפדנית של משרד הבריאות');
         }
         
-        if (businessProfile.lateHours) {
+        if (businessProfile.operationalHours?.lateNightOperation) {
             insights.push('פעילות במשמרת לילה דורשת אישורים נוספים מהעירייה ועלולה להיות מוגבלת באזורים מסוימים');
         }
 
