@@ -2,8 +2,8 @@
 
 A comprehensive system that helps business owners in Israel understand the regulatory requirements relevant to their business. The system receives business information and returns a customized report with applicable regulatory requirements.
 
-**IMPORTANT: API Key Required**
-To run this application, you will need an OpenRouter API key for AI report generation. The API key should be included in the zip file provided. Place it in the `.env` file as shown in the installation instructions.
+# **IMPORTANT: API Key Required**
+**To run this application, you will need an OpenRouter API key for AI report generation. The API key should be included in the zip file provided. Place it in the `.env` file as shown in the installation instructions.**
 
 ## Project Description and Goals
 
